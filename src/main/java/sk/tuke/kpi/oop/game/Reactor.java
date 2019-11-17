@@ -1,8 +1,13 @@
 package sk.tuke.kpi.oop.game;
 
 import com.badlogic.gdx.Gdx;
+import org.jetbrains.annotations.NotNull;
+import sk.tuke.kpi.gamelib.Scene;
 import sk.tuke.kpi.gamelib.framework.AbstractActor;
 import sk.tuke.kpi.gamelib.graphics.Animation;
+import sk.tuke.kpi.oop.game.actions.PerpetualReactorHeating;
+import sk.tuke.kpi.oop.game.tools.FireExtinguisher;
+import sk.tuke.kpi.oop.game.tools.Hammer;
 
 import java.util.Objects;
 
@@ -41,6 +46,13 @@ public class Reactor extends AbstractActor {
 
     public int getDamage() {
         return damage;
+    }
+
+    @Override
+    public void addedToScene(@NotNull Scene scene) {
+        super.addedToScene(scene);
+        PerpetualReactorHeating heatingAction = new PerpetualReactorHeating(1);
+        heatingAction.scheduleFor(this);
     }
 
     public void extinguishWith (FireExtinguisher extinguisher){
