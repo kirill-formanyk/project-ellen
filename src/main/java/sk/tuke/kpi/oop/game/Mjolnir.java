@@ -5,3 +5,5 @@ public class Mjolnir extends Hammer {
         super(4);
     }
 }
+
+// test comment
