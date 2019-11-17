@@ -43,7 +43,6 @@ public class Reactor extends AbstractActor {
         return damage;
     }
 
-
     public void extinguishWith (FireExtinguisher extinguisher){
         if (isBroken() && Objects.nonNull(extinguisher)) {
             extinguisher.use();
