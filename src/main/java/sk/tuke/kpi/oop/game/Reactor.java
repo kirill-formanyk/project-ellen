@@ -23,6 +23,7 @@ public class Reactor extends AbstractActor {
     private boolean isOn; // true - on, false - off
     private Light light;
 
+    //fsf
     public Reactor() {
         this.temperature = 0;
         this.damage = 0;
