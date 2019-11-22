@@ -15,7 +15,6 @@ public class Cooler extends AbstractActor {
     private Reactor reactor;
 
     public Cooler (Reactor reactor){
-        this.isOn = false;
         this.reactor = reactor;
         this.animation = new Animation("sprites/fan.png", 32, 32, 0.2f, Animation.PlayMode.LOOP_PINGPONG);
         setAnimation(this.animation);
@@ -44,7 +43,7 @@ public class Cooler extends AbstractActor {
         return reactor;
     }
 
-    private void coolReactor (){
+    protected void coolReactor (){
         if (Objects.nonNull(reactor) && isOn()) {
             reactor.decreaseTemperature(1);
         }
