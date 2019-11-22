@@ -9,7 +9,7 @@ import sk.tuke.kpi.gamelib.graphics.Animation;
 
 import java.util.Objects;
 
-public class Cooler extends AbstractActor {
+public class Cooler extends AbstractActor implements Switchable {
     private boolean isOn;
     private Animation animation;
     private Reactor reactor;
@@ -21,10 +21,12 @@ public class Cooler extends AbstractActor {
         this.animation.pause();
     }
 
+    @Override
     public boolean isOn() {
         return isOn;
     }
 
+    @Override
     public void turnOn () {
         if (!isOn()) {
             this.isOn = true;
@@ -32,6 +34,7 @@ public class Cooler extends AbstractActor {
         }
     }
 
+    @Override
     public void turnOff (){
         if(isOn()){
             this.isOn = false;

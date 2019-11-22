@@ -9,9 +9,11 @@ import sk.tuke.kpi.oop.game.actions.PerpetualReactorHeating;
 import sk.tuke.kpi.oop.game.tools.FireExtinguisher;
 import sk.tuke.kpi.oop.game.tools.Hammer;
 
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
 
-public class Reactor extends AbstractActor {
+public class Reactor extends AbstractActor implements Switchable {
     private int temperature;
     private int damage; //повреждение
     private Animation normalAnimation;
@@ -21,13 +23,13 @@ public class Reactor extends AbstractActor {
     private Animation animationExtinguished;
 
     private boolean isOn; // true - on, false - off
-    private Light light;
+    private Set<EnergyConsumer> devices;
 
-    //fsf
     public Reactor() {
         this.temperature = 0;
         this.damage = 0;
         this.isOn = false;
+        this.devices = new HashSet<>();
 
         this.normalAnimation =
             new Animation("sprites/reactor_on.png", 80, 80, 0.1f, Animation.PlayMode.LOOP_PINGPONG);
@@ -64,39 +66,47 @@ public class Reactor extends AbstractActor {
         }
     }
 
-    public void addLight (Light light) {
-        this.light = light;
-        if (Objects.nonNull(this.light) && isRunning() && !isBroken()){
-            this.light.setElectricityFlow(true);
+    public void addDevice (EnergyConsumer device) {
+        devices.add(device);
+        if (isOn() && !isDamaged()){
+            device.setPowered(true);
         }
     }
 
-    public void removeLight(){
-        if (Objects.nonNull(light)) {
-            this.getScene().removeActor(light);
-        }
+    public void removeLight(EnergyConsumer device){
+        devices.remove(device);
+        device.setPowered(false);
     }
 
+    @Override
     public void turnOn() {
-        if (!isBroken()) {
-            this.isOn = true;
-            updateAnimation();
-            if (Objects.nonNull(light)) light.setElectricityFlow(true);
-        }
+        this.isOn = true;
+        devices.forEach(
+            device -> {
+                if (Objects.nonNull(device)) device.setPowered(true);
+            }
+        );
+        updateAnimation();
     }
 
+    @Override
     public void turnOff () {
         this.isOn = false;
+        devices.forEach(
+            device -> {
+                if (Objects.nonNull(device)) device.setPowered(false);
+            }
+        );
         updateAnimation();
-        if (Objects.nonNull(light)) light.setElectricityFlow(false);
     }
 
-    public boolean isRunning () {
+    @Override
+    public boolean isOn() {
         return isOn;
     }
 
     public void increaseTemperature (int increment) {
-        if (increment < 0 || isBroken() || !isRunning()) return;
+        if (increment < 0 || isBroken() || !isOn()) return;
 
         if (damage >= 33 && damage < 66) {
             temperature += Math.round(1.5 * increment);
@@ -117,7 +127,7 @@ public class Reactor extends AbstractActor {
     }
 
     public void decreaseTemperature (int decrement){
-        if (decrement < 0 || isBroken() || !isRunning()) return;
+        if (decrement < 0 || isBroken() || !isOn()) return;
 
         if(damage >= 50){
             temperature = Math.max((temperature - (int) Math.round(decrement * 0.5)), 0);
@@ -129,7 +139,7 @@ public class Reactor extends AbstractActor {
     }
 
     private void updateAnimation() {
-        if (!isRunning() && !isBroken()) {
+        if (!isOn() && !isBroken()) {
             setAnimation(animationOff);
         } else {
             float newFrameDuration;
