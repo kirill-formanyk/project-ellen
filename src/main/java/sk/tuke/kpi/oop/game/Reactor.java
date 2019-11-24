@@ -6,14 +6,13 @@ import sk.tuke.kpi.gamelib.Scene;
 import sk.tuke.kpi.gamelib.framework.AbstractActor;
 import sk.tuke.kpi.gamelib.graphics.Animation;
 import sk.tuke.kpi.oop.game.actions.PerpetualReactorHeating;
-import sk.tuke.kpi.oop.game.tools.FireExtinguisher;
-import sk.tuke.kpi.oop.game.tools.Hammer;
+import sk.tuke.kpi.oop.game.tools.Repairable;
 
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class Reactor extends AbstractActor implements Switchable {
+public class Reactor extends AbstractActor implements Switchable, Repairable {
     private int temperature;
     private int damage; //повреждение
     private Animation normalAnimation;
@@ -58,12 +57,13 @@ public class Reactor extends AbstractActor implements Switchable {
         heatingAction.scheduleFor(this);
     }
 
-    public void extinguishWith (FireExtinguisher extinguisher){
-        if (isBroken() && Objects.nonNull(extinguisher)) {
-            extinguisher.use();
+    public boolean extinguish (){
+        if (isBroken()) {
             temperature = 4000;
             setAnimation(animationExtinguished);
+            return true;
         }
+        return false;
     }
 
     public void addDevice (EnergyConsumer device) {
@@ -166,17 +166,18 @@ public class Reactor extends AbstractActor implements Switchable {
         }
     }
 
-    public void repairWith (Hammer hammer) {
-        if (Objects.isNull(hammer) || !isDamaged() || isBroken()) return;
-        hammer.use();
+    @Override
+    public boolean repair () {
+        if (isDamaged() && !isBroken()) {
+            int difference = damage - 50;
+            int recalculatedTemperature = difference * 40 + 2000;
 
-        int difference = damage - 50;
-        int recalculatedTemperature = difference * 40 + 2000;
-
-        damage = Math.max(difference, 0);
-        temperature = Math.min(recalculatedTemperature, temperature);
-        updateAnimation();
-
+            damage = Math.max(difference, 0);
+            temperature = Math.min(recalculatedTemperature, temperature);
+            updateAnimation();
+            return true;
+        }
+        return false;
     }
 
     private boolean isOverheated() {

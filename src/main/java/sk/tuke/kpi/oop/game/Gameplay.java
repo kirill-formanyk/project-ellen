@@ -1,5 +1,4 @@
 /*
-
 package sk.tuke.kpi.oop.game;
 
 import org.jetbrains.annotations.NotNull;
@@ -9,17 +8,23 @@ import sk.tuke.kpi.gamelib.actions.Invoke;
 import sk.tuke.kpi.gamelib.actions.Wait;
 import sk.tuke.kpi.gamelib.actions.When;
 import sk.tuke.kpi.gamelib.framework.Scenario;
+import sk.tuke.kpi.gamelib.map.MapMarker;
 import sk.tuke.kpi.oop.game.tools.Hammer;
+
+import java.util.Map;
 
 public class Gameplay extends Scenario {
     @Override
     public void setupPlay(@NotNull Scene scene) {
+        Map <String, MapMarker> markers = scene.getMap().getMarkers();
+
         Reactor reactor = new Reactor();
-        scene.addActor(reactor, 64, 64);
-        reactor.turnOn();
+        MapMarker reactorMarker1 = markers.get("reactor-area-1");
+        scene.addActor(reactor, reactorMarker1.getPosX(), reactorMarker1.getPosY());
 
         Cooler cooler = new Cooler(reactor);
-        scene.addActor(cooler, -20, 100);
+        MapMarker coolerMarker1 = markers.get("cooler-area-1");
+        scene.addActor(cooler, coolerMarker1.getPosX(), coolerMarker1.getPosY());
 
         new ActionSequence<>(
             new Wait<>(5),
@@ -28,13 +33,6 @@ public class Gameplay extends Scenario {
 
         Hammer hammer = new Hammer();
         scene.addActor(hammer, 50, -40);
-
-        new When<>(
-            () -> reactor.getTemperature() >= 3000,
-            new Invoke<>(() -> reactor.repairWith(hammer))
-        ).scheduleFor(reactor);
     }
 }
-
-
 */
