@@ -2,6 +2,7 @@ package sk.tuke.kpi.oop.game.actions;
 
 import org.jetbrains.annotations.Nullable;
 import sk.tuke.kpi.gamelib.actions.Action;
+import sk.tuke.kpi.gamelib.map.SceneMap;
 import sk.tuke.kpi.oop.game.Direction;
 import sk.tuke.kpi.oop.game.Movable;
 
@@ -56,10 +57,17 @@ public class Move <A extends Movable> implements Action<A> {
 
             duration -= deltaTime;
             if (duration > 0) {
-                actor.setPosition(
-                    (actor.getPosX() + direction.getDx()) * actor.getSpeed(),
-                    (actor.getPosY() + direction.getDy()) * actor.getSpeed()
-                );
+                int currentPlayerX = actor.getPosX();
+                int currentPlayerY = actor.getPosY();
+
+                int newPlayerX = actor.getPosX() + direction.getDx() * actor.getSpeed();
+                int newPlayerY = actor.getPosY() + direction.getDy() * actor.getSpeed();
+                actor.setPosition(newPlayerX, newPlayerY);
+
+                SceneMap map = Objects.requireNonNull(actor.getScene()).getMap();
+                if (map.intersectsWithWall(actor)) {
+                    actor.setPosition(currentPlayerX, currentPlayerY);
+                }
             } else {
                 stop();
             }
