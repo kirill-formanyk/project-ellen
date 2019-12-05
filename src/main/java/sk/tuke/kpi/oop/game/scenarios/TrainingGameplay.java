@@ -9,7 +9,7 @@ import sk.tuke.kpi.gamelib.framework.Scenario;
 import sk.tuke.kpi.gamelib.map.MapMarker;
 import sk.tuke.kpi.oop.game.Cooler;
 import sk.tuke.kpi.oop.game.Reactor;
-import sk.tuke.kpi.oop.game.tools.Hammer;
+import sk.tuke.kpi.oop.game.items.Hammer;
 
 import java.util.Map;
 

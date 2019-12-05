@@ -1,7 +1,9 @@
-package sk.tuke.kpi.oop.game;
+package sk.tuke.kpi.oop.game.characters;
 
 import sk.tuke.kpi.gamelib.framework.AbstractActor;
 import sk.tuke.kpi.gamelib.graphics.Animation;
+import sk.tuke.kpi.oop.game.Direction;
+import sk.tuke.kpi.oop.game.Movable;
 
 public class Alien extends AbstractActor implements Movable {
     public Alien() {

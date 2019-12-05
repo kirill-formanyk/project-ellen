@@ -7,7 +7,7 @@ import sk.tuke.kpi.gamelib.actions.ActionSequence;
 import sk.tuke.kpi.gamelib.actions.Invoke;
 import sk.tuke.kpi.gamelib.actions.Wait;
 import sk.tuke.kpi.gamelib.framework.actions.Loop;
-import sk.tuke.kpi.oop.game.tools.Repairable;
+import sk.tuke.kpi.oop.game.items.Repairable;
 
 import java.util.Objects;
 import java.util.Random;
