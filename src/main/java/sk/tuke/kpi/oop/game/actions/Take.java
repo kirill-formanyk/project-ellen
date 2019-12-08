@@ -25,8 +25,7 @@ public class Take <X extends Keeper> extends AbstractAction<X> {
                     currentScene.getOverlay().drawText(exception.getMessage(), -100, 0).showFor(2);
                 }
             }
-
-            setDone(true);
         }
+        setDone(true);
     }
 }

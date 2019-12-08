@@ -2,16 +2,19 @@ package sk.tuke.kpi.oop.game.characters;
 
 import sk.tuke.kpi.gamelib.framework.AbstractActor;
 import sk.tuke.kpi.gamelib.graphics.Animation;
+import sk.tuke.kpi.gamelib.messages.Topic;
 import sk.tuke.kpi.oop.game.Direction;
 import sk.tuke.kpi.oop.game.Keeper;
 import sk.tuke.kpi.oop.game.Movable;
 import sk.tuke.kpi.oop.game.items.Backpack;
-import sk.tuke.kpi.oop.game.items.Collectible;
 
-public class Ripley extends AbstractActor implements Movable, Keeper<Collectible> {
+public class Ripley extends AbstractActor implements Movable, Keeper {
+    public static final Topic<Ripley> RIPLEY_DIED = Topic.create("Ripley died", Ripley.class);
+
     private Backpack backpack;
     private int energy;
     private int ammo;
+    private Animation dieAnimation;
 
     private static final int MAX_AMMO = 500;
 
@@ -20,6 +23,8 @@ public class Ripley extends AbstractActor implements Movable, Keeper<Collectible
         this.energy = 100;
         this.ammo = 0;
         this.backpack = new Backpack("Ripley's backpack", 10);
+        this.dieAnimation =
+            new Animation("sprites/player_die.png", 32, 32, 0.1f, Animation.PlayMode.LOOP);
         setAnimation(
             new Animation("sprites/player.png", 32, 32, 0.1f, Animation.PlayMode.LOOP_PINGPONG)
         );
@@ -48,6 +53,12 @@ public class Ripley extends AbstractActor implements Movable, Keeper<Collectible
     }
 
     public void setEnergy(int energy) {
+        if (energy <= 0) {
+            this.energy = 0;
+            setAnimation(dieAnimation);
+            getScene().getMessageBus().publish(RIPLEY_DIED, this);
+            return;
+        }
         this.energy = energy;
     }
 

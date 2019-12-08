@@ -22,7 +22,7 @@ public class Drop <X extends Keeper> extends AbstractAction<X> {
                 currentScene.addActor(item, executingActor.getPosX(), executingActor.getPosY());
             }
 
-            setDone(true);
         }
+        setDone(true);
     }
 }
