@@ -39,9 +39,8 @@ public class MissionImpossible implements SceneListener {
                 new Loop<>(
                     new ActionSequence<>(
                         new Wait<>(0.6f),
-                        new Invoke<>(() -> ellen.setEnergy(ellen.getEnergy() - 1))
-                    )
-                ).scheduleFor(ellen)
+                        new Invoke<>(() -> ellen.getHealth().drain(1))
+                )).scheduleFor(ellen)
         );
 
         scene.getMessageBus().subscribe(Ripley.RIPLEY_DIED,
@@ -69,12 +68,7 @@ public class MissionImpossible implements SceneListener {
 
     @Override
     public void sceneUpdating(@NotNull Scene scene) {
-        int windowHeight = scene.getGame().getWindowSetup().getHeight();
-        int yTextPos = windowHeight - GameApplication.STATUS_LINE_OFFSET;
-
-        scene.getGame().getOverlay().drawText("| Energy: " + ellen.getEnergy(), 100, yTextPos);
-        scene.getGame().getOverlay().drawText("| Ammo: " + ellen.getAmmo(), 250, yTextPos);
-        scene.getGame().pushActorContainer(ellen.getBackpack());
+        ellen.showState(scene);
     }
 
     public static class Factory implements ActorFactory {

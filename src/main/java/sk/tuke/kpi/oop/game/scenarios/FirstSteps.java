@@ -1,7 +1,6 @@
 package sk.tuke.kpi.oop.game.scenarios;
 
 import org.jetbrains.annotations.NotNull;
-import sk.tuke.kpi.gamelib.GameApplication;
 import sk.tuke.kpi.gamelib.Scene;
 import sk.tuke.kpi.gamelib.SceneListener;
 import sk.tuke.kpi.gamelib.actions.ActionSequence;
@@ -24,7 +23,6 @@ public class FirstSteps implements SceneListener {
         player = new Ripley();
         energy = new Energy();
         ammo = new Ammo();
-        player.setEnergy(50);
         scene.addActor(player, 0, 150);
         scene.addActor(energy, 10, -50);
         scene.addActor(ammo, -50, 120);
@@ -66,11 +64,6 @@ public class FirstSteps implements SceneListener {
 
     @Override
     public void sceneUpdating(@NotNull Scene scene) {
-        int windowHeight = scene.getGame().getWindowSetup().getHeight();
-        int yTextPos = windowHeight - GameApplication.STATUS_LINE_OFFSET;
-
-        scene.getGame().getOverlay().drawText("| Energy: " + player.getEnergy(), 100, yTextPos);
-        scene.getGame().getOverlay().drawText("| Ammo: " + player.getAmmo(), 250, yTextPos);
-        scene.getGame().pushActorContainer(player.getBackpack());
+        player.showState(scene);
     }
 }

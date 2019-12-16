@@ -67,6 +67,7 @@ public class Move <A extends Movable> implements Action<A> {
                 SceneMap map = Objects.requireNonNull(actor.getScene()).getMap();
                 if (map.intersectsWithWall(actor)) {
                     actor.setPosition(currentPlayerX, currentPlayerY);
+                    actor.collidedWithWall();
                 }
             } else {
                 stop();
