@@ -11,7 +11,7 @@ public class Shift <X extends Keeper> extends AbstractAction<X> {
         Keeper executingActor = getActor();
         if (Objects.nonNull(executingActor) && !isDone()) {
             executingActor.getBackpack().shift();
-            setDone(true);
         }
+        setDone(true);
     }
 }

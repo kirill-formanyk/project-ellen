@@ -1,10 +1,11 @@
 package sk.tuke.kpi.oop.game.items;
 
-import sk.tuke.kpi.gamelib.Actor;
 import sk.tuke.kpi.gamelib.graphics.Animation;
-import sk.tuke.kpi.oop.game.Reactor;
+import sk.tuke.kpi.oop.game.Repairable;
 
-public class Hammer <Q extends Actor> extends BreakableTool <Q> implements Collectible {
+import java.util.Objects;
+
+public class Hammer extends BreakableTool <Repairable> implements Collectible {
     public Hammer (int remainingUses) {
         super (remainingUses);
         setAnimation(new Animation("sprites/hammer.png"));
@@ -15,12 +16,14 @@ public class Hammer <Q extends Actor> extends BreakableTool <Q> implements Colle
     }
 
     @Override
-    public void useWith (Q actor) {
-        if (actor instanceof Reactor) {
-            Reactor reactor = (Reactor) actor;
-            if (reactor.repair()) {
-                super.useWith(actor);
-            }
+    public void useWith (Repairable actor) {
+        if (Objects.nonNull(actor) && actor.repair()) {
+            super.useWith(actor);
         }
+    }
+
+    @Override
+    public Class<Repairable> getUsingActorClass() {
+        return Repairable.class;
     }
 }
