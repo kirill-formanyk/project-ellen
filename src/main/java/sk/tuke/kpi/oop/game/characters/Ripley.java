@@ -15,27 +15,32 @@ import sk.tuke.kpi.oop.game.Keeper;
 import sk.tuke.kpi.oop.game.Movable;
 import sk.tuke.kpi.oop.game.controllers.KeeperController;
 import sk.tuke.kpi.oop.game.controllers.MovableController;
+import sk.tuke.kpi.oop.game.controllers.ShooterController;
 import sk.tuke.kpi.oop.game.items.Backpack;
+import sk.tuke.kpi.oop.game.openables.Door;
+import sk.tuke.kpi.oop.game.weapons.Firearm;
+import sk.tuke.kpi.oop.game.weapons.Gun;
 
 import java.util.Objects;
 
-public class Ripley extends AbstractActor implements Movable, Keeper, Alive {
+public class Ripley extends AbstractActor implements Movable, Keeper, Alive, Armed {
     public static final Topic<Ripley> RIPLEY_DIED = Topic.create("Ripley died", Ripley.class);
 
     private Backpack backpack;
     private Health health;
-    private int ammo;
+    private Firearm gun;
     private Animation dieAnimation;
 
     private Disposable movableControllerListener;
     private Disposable keeperControllerListener;
+    private Disposable shooterControllerListener;
 
     private static final int MAX_AMMO = 500;
 
     public Ripley () {
         super("Ellen");
         this.health = new Health(200);
-        this.ammo = 0;
+        this.gun = new Gun(100, 500);
         this.backpack = new Backpack("Ripley's backpack", 10);
         this.dieAnimation =
             new Animation("sprites/player_die.png", 32, 32, 0.1f, Animation.PlayMode.LOOP);
@@ -48,18 +53,6 @@ public class Ripley extends AbstractActor implements Movable, Keeper, Alive {
     @Override
     public Backpack getBackpack () {
         return this.backpack;
-    }
-
-    public int getAmmo() {
-        return ammo;
-    }
-
-    public void setAmmo(int ammo) {
-        this.ammo = ammo;
-    }
-
-    public boolean hasFullAmmunition () {
-        return this.ammo == MAX_AMMO;
     }
 
     @Override
@@ -83,7 +76,7 @@ public class Ripley extends AbstractActor implements Movable, Keeper, Alive {
         int yTextPos = windowHeight - GameApplication.STATUS_LINE_OFFSET;
 
         scene.getGame().getOverlay().drawText("| Health: " + this.health.getValue(), 100, yTextPos);
-        scene.getGame().getOverlay().drawText("| Ammo: " + this.getAmmo(), 250, yTextPos);
+        scene.getGame().getOverlay().drawText("| Ammo: " + this.gun.getValue(), 250, yTextPos);
         scene.getGame().getOverlay().drawText("| Max ammo: " + MAX_AMMO, 380, yTextPos);
         scene.getGame().pushActorContainer(this.getBackpack());
     }
@@ -95,9 +88,25 @@ public class Ripley extends AbstractActor implements Movable, Keeper, Alive {
 
         MovableController movableController = new MovableController(this);
         KeeperController keeperController = new KeeperController(this);
+        ShooterController shooterController = new ShooterController(this);
 
         movableControllerListener = scene.getInput().registerListener(movableController);
         keeperControllerListener = scene.getInput().registerListener(keeperController);
+        shooterControllerListener = scene.getInput().registerListener(shooterController);
+
+        scene.getMessageBus().subscribe(Door.DOOR_OPENED,
+            door -> {
+                if (door.getName().equals("exit door")) {
+                    scene.getGame().getOverlay().drawText("Well done!", this.getPosX(), this.getPosY()).showFor(3);
+                    movableControllerListener.dispose();
+                    keeperControllerListener.dispose();
+                    shooterControllerListener.dispose();
+                    new ActionSequence<>(
+                        new Wait<>(3),
+                        new Invoke<>(scene.getGame()::stop)
+                    ).scheduleOn(scene);
+                }
+        });
     }
 
     private void die () {
@@ -111,6 +120,7 @@ public class Ripley extends AbstractActor implements Movable, Keeper, Alive {
 
             movableControllerListener.dispose();
             keeperControllerListener.dispose();
+            shooterControllerListener.dispose();
 
             new ActionSequence<>(
                 new Invoke<>(() -> scene.getGame().getOverlay().drawText("Ripley died!", this.getPosX(), this.getPosY()).showFor(Integer.MAX_VALUE)),
@@ -123,5 +133,15 @@ public class Ripley extends AbstractActor implements Movable, Keeper, Alive {
     @Override
     public Health getHealth() {
         return this.health;
+    }
+
+    @Override
+    public Firearm getFirearm() {
+        return this.gun;
+    }
+
+    @Override
+    public void setFirearm(Firearm weapon) {
+        this.gun = weapon;
     }
 }

@@ -17,20 +17,30 @@ public class Door extends AbstractActor implements Openable, Usable<Actor> {
     public static final Topic<Door> DOOR_OPENED = Topic.create("door opened", Door.class);
     public static final Topic<Door> DOOR_CLOSED = Topic.create("door closed", Door.class);
 
-    private Animation animation;
     private boolean opened;
+    private Orientation orientation;
 
-    public Door () {
-        this.animation = new Animation("sprites/vdoor.png", 16, 32, 0.1f);
-        setAnimation(animation);
-        animation.pause();
+    public Door (Orientation orientation) {
+        this("door", orientation);
+    }
+
+    public Door (String name, Orientation orientation) {
+        super(name);
+        this.orientation = orientation;
         this.opened = false;
+
+        Animation verticalAnimation = new Animation("sprites/vdoor.png", 16, 32, 0.1f);
+        Animation horizontalAnimation = new Animation("sprites/hdoor.png", 32, 16, 0.1f);
+        verticalAnimation.pause();
+        horizontalAnimation.pause();
+
+        setAnimation(this.orientation == Orientation.VERTICAL ? verticalAnimation : horizontalAnimation);
     }
 
     @Override
     public void open() {
-        animation.setPlayMode(Animation.PlayMode.ONCE);
-        animation.play();
+        getAnimation().setPlayMode(Animation.PlayMode.ONCE);
+        getAnimation().play();
         this.opened = true;
         changeTilesTypeTo(MapTile.Type.CLEAR);
 
@@ -39,8 +49,8 @@ public class Door extends AbstractActor implements Openable, Usable<Actor> {
 
     @Override
     public void close() {
-        animation.setPlayMode(Animation.PlayMode.ONCE_REVERSED);
-        animation.play();
+        getAnimation().setPlayMode(Animation.PlayMode.ONCE_REVERSED);
+        getAnimation().play();
         this.opened = false;
         changeTilesTypeTo(MapTile.Type.WALL);
 
@@ -62,10 +72,17 @@ public class Door extends AbstractActor implements Openable, Usable<Actor> {
         int firstTileX = this.getPosX() / map.getTileWidth();
         int firstTileY = this.getPosY() / map.getTileHeight();
 
-        return List.of(
-            map.getTile(firstTileX, firstTileY),
-            map.getTile(firstTileX, firstTileY + 1)
-        );
+        if (this.orientation == Orientation.VERTICAL) {
+            return List.of(
+                map.getTile(firstTileX, firstTileY),
+                map.getTile(firstTileX, firstTileY + 1)
+            );
+        } else {
+            return List.of(
+                map.getTile(firstTileX, firstTileY),
+                map.getTile(firstTileX + 1, firstTileY)
+            );
+        }
     }
 
     @Override
@@ -91,5 +108,10 @@ public class Door extends AbstractActor implements Openable, Usable<Actor> {
     @Override
     public Class<Actor> getUsingActorClass() {
         return Actor.class;
+    }
+
+    public enum Orientation {
+        VERTICAL,
+        HORIZONTAL
     }
 }

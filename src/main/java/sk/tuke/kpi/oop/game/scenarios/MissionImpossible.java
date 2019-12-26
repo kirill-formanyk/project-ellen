@@ -80,7 +80,7 @@ public class MissionImpossible implements SceneListener {
                 case "access card" : return new AccessCard();
                 case "energy" : return new Energy();
                 case "locker" : return new Locker();
-                case "door" : return new LockedDoor();
+                case "door" : return new LockedDoor(Door.Orientation.VERTICAL);
                 case "ventilator" : return new Ventilator();
                 default: return null;
             }

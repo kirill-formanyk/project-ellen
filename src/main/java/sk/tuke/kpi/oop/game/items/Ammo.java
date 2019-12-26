@@ -2,25 +2,25 @@ package sk.tuke.kpi.oop.game.items;
 
 import sk.tuke.kpi.gamelib.framework.AbstractActor;
 import sk.tuke.kpi.gamelib.graphics.Animation;
-import sk.tuke.kpi.oop.game.characters.Ripley;
+import sk.tuke.kpi.oop.game.characters.Armed;
 
 import java.util.Objects;
 
-public class Ammo extends AbstractActor implements Usable<Ripley> {
+public class Ammo extends AbstractActor implements Usable<Armed> {
     public Ammo () {
         setAnimation(new Animation("sprites/ammo.png"));
     }
 
     @Override
-    public void useWith(Ripley actor) {
-        if (Objects.nonNull(actor) && !actor.hasFullAmmunition()) {
-            actor.setAmmo(Math.min(actor.getAmmo() + 50, 500));
+    public void useWith(Armed actor) {
+        if (Objects.nonNull(actor) && actor.getFirearm().getValue() != actor.getFirearm().getMaxAmmo()) {
+            actor.getFirearm().reload(50);
             getScene().removeActor(this);
         }
     }
 
     @Override
-    public Class<Ripley> getUsingActorClass() {
-        return Ripley.class;
+    public Class<Armed> getUsingActorClass() {
+        return Armed.class;
     }
 }

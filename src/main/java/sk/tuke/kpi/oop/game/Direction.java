@@ -21,6 +21,31 @@ public enum Direction {
         this.dy = dy;
     }
 
+    public static Direction fromAngle(float angle) {
+        int angleAsInt = (int) angle;
+        switch (angleAsInt) {
+            case 0: return NORTH;
+            case 45: return NORTH_WEST;
+            case 90: return WEST;
+            case 135: return SOUTH_WEST;
+            case 180: return SOUTH;
+            case 225: return SOUTH_EAST;
+            case 270: return EAST;
+            case 315: return NORTH_EAST;
+            default: return NONE;
+        }
+    }
+
+    public static Direction fromCoordinates(int dx, int dy) {
+        for (Direction direction : values()) {
+            if (direction.dx == dx && direction.dy == dy) {
+                return direction;
+            }
+        }
+
+        return NONE;
+    }
+
     public float getAngle () {
         switch (this) {
             case NONE : return -1;
