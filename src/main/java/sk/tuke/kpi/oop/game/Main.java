@@ -8,7 +8,7 @@ public class Main {
         WindowSetup windowSetup = new WindowSetup("Project Ellen", 800, 500);
         Game game = new GameApplication(windowSetup);
 
-        Scene scene = new World("World", "maps/escape-room/escape-room.tmx", new TrainingScenario.Factory());
+        Scene scene = new World("World", "maps/test-map/first-map.tmx", new TrainingScenario.Factory());
         TrainingScenario trainingScenario = new TrainingScenario();
         scene.addListener(trainingScenario);
 
